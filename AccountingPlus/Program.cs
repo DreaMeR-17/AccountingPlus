@@ -13,7 +13,7 @@ namespace AccountingPlus
             const string CommandSearchByName = "4";
             const string CommandExit = "5";
 
-            Dictionary<string, List<string>> dossiers = AddDossiers();
+            Dictionary<string, List<string>> dossiers = CreateDossiers();
 
             string userInput;
 
@@ -67,7 +67,7 @@ namespace AccountingPlus
             }
         }
 
-        static Dictionary<string, List<string>> AddDossiers()
+        static Dictionary<string, List<string>> CreateDossiers()
         {
             Dictionary<string, List<string>> dossier = new Dictionary<string, List<string>>();
 
@@ -98,23 +98,20 @@ namespace AccountingPlus
         {
             Console.Clear();
 
-            string newName = ReadNewName();
-            string newJob = ReadNewJob();
+            string newName = ReadNewString(info: "имя");
+            string newJob = ReadNewString(info: "должность");
 
             List<string> tempName = new List<string>();
 
             Console.WriteLine($"Добавлен новый работник {newName} в должности {newJob}");
 
-            if (dossiers.ContainsKey(newJob))
+            if (dossiers.ContainsKey(newJob) == false)
             {
-                tempName = dossiers[newJob];
-                tempName.Add(newName);
-                dossiers[newJob] = tempName;
+                dossiers.Add(newJob, new List<string>());
             }
             else
             {
-                tempName.Add(newName);
-                dossiers.Add(newJob, tempName);
+                dossiers[newJob].Add(newName);
             }
         }
 
@@ -198,24 +195,11 @@ namespace AccountingPlus
             }
         }
 
-        static string ReadNewName()
+        static string ReadNewString(string info)
         {
-            string name = null;
+            Console.WriteLine($"Введите {info}");
 
-            Console.WriteLine("Введите имя нового работника: ");
-            name = Console.ReadLine();
-
-            string newName = $"{name}";
-
-            return newName;
-        }
-
-        static string ReadNewJob()
-        {
-            Console.WriteLine("Введите новую должность: ");
-            string newJob = Console.ReadLine();
-
-            return newJob;
+            return Console.ReadLine();
         }
 
         static string ReadFullName(List<string> value)
@@ -228,25 +212,27 @@ namespace AccountingPlus
             while (isWork)
             {
                 foreach (string fullName in value)
+                {
                     Console.WriteLine($"{fullName}");
+                }
 
                 Console.WriteLine("Введите имя работника:");
                 string userInput = Console.ReadLine();
-
-                foreach (string fullName in value)
+               
+                if (value.Contains(userInput))
                 {
-                    if (userInput == fullName)
-                    {
-                        fullNameDelete = fullName;
-                        isFound = true;
-                        break;
-                    }
+                    fullNameDelete = userInput;
+                    isFound = true;
                 }
 
                 if (isFound)
+                {
                     isWork = false;
+                }
                 else
+                {
                     Console.WriteLine("Такой фамилии нет.");
+                }
             }
 
             return fullNameDelete;
